@@ -152,5 +152,29 @@ describe('When voting task board', () => {
     board.addTask('Task 1');
     board.addPlayer('Fulano 1');
     board.addPlayer('Fulano 2');
+    board.vote(1, 10);
+    expect(board.getStatus()).toBeFalsy();
+  });
+
+  it('should show all players and points if all players have voted', () => {
+    const player1 = {
+      name: 'fulano 1',
+      points: 10
+    };
+    const player2 = {
+      name: 'fulano 2',
+      points: 10
+    };
+
+    const board = new Board(i18nService);
+    board.addTask('Task 1');
+    board.addPlayer(player1.name);
+    board.addPlayer(player2.name);
+    board.vote(1, 10);
+    board.vote(2, 10);
+    expect(board.getStatus()).toMatchObject({
+      players: [player1, player2],
+      average: 10
+    });
   });
 });

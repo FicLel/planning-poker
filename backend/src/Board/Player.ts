@@ -17,4 +17,16 @@ export class Player {
   addVote(value: number) {
     this._vote = value;
   }
+
+  toDto(): PlayerDto {
+    return {
+      name: this._name,
+      points: this._vote
+    }
+  }
+}
+
+export interface PlayerDto {
+  name: string;
+  points: number;
 }

@@ -1,43 +1,13 @@
 import { I18nService } from 'nestjs-i18n';
 import { Task } from './Task';
-import { Player } from './Player';
-
-export class PlayerList {
-  constructor(private players: Map<number, Player> = new Map<number,Player>()) {}
-
-  addPlayer(name: string) {
-    const id = this.players.size + 1;
-    this.players.set(id, new Player(name, id));
-  }
-
-  getPlayers() {
-    return this.players;
-  }
-
-  getUserVote(id: number) {
-    return this.players.get(id).vote;
-  }
-
-  vote(id: number, value: number) {
-    const player = this.players.get(id);
-    player.addVote(value);
-    this.players.set(id, player);
-  }
-
-  pointsAvg(): number {
-    let sumPoints = 0;
-    this.players.forEach((player: Player) => {
-      sumPoints += player.vote;
-    });
-    return sumPoints / this.players.size;
-  }
-}
-
+import { PlayerList } from './PlayerList';
 
 export class Board {
   playerList: PlayerList;
   tasks: Task[];
-  activeTaskIndex?: number = null;
+  activeTaskIndex: number | null = null;
+  hidden: boolean = true;
+
   constructor(private i18nService: I18nService) {
     this.playerList = new PlayerList();
     this.tasks = [];
@@ -84,16 +54,39 @@ export class Board {
   }
   
   vote(id: number, value: number): void | Error {
-    if (this.activeTaskIndex === undefined) {
+    if (this.activeTaskIndex === null) {
       throw new Error('No task added to vote');
     } 
     this.playerList.vote(id, value);
+    this.updateStatus();
   }
 
   pointsAvg(): number {
     return this.playerList.pointsAvg();
   }
 
+  getStatus() {
+    if (this.hidden) return;
+
+    return {
+      players: this.playerList.getListOfPlayers(),
+      average: this.playerList.pointsAvg(),
+    }
+    
+  }
+
+  private updateStatus() {
+    if (
+      this.playerList.allPlayersHaveVoted() &&
+      this.tasks.length === this.activeTaskIndex + 1
+    ) {
+      this.hidden = false;
+      return;
+    }
+    if (this.playerList.allPlayersHaveVoted()) {
+      this.activeTaskIndex += 1;
+    }
+  }
   private setActiveTask(id?: number) {
     if (id) {
       this.activeTaskIndex = id;
