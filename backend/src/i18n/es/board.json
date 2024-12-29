@@ -1,0 +1,4 @@
+{
+  "noActiveTask": "No hay ninguna tarea activa.",
+  "activeTask": "La tarea activa actual es: {title}"
+}
