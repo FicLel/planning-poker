@@ -1,3 +1,18 @@
+import styled from 'styled-components';
+
+export const PlayerContainer = styled.div`
+  display: flex;
+  height: 50px;
+  width: 50px;
+  border-radius: 40%;
+`;
+
+export const PlayerName = styled.h4`
+  color:  #afafaf;
+  padding: 1px;
+  margin: 0;
+`;
+
 const getRandomHairColor = () => {
   const colors = ['#FF5733', '#33FF57', '#3357FF', '#F1C40F', '#8E44AD', '#E74C3C'];
   return colors[Math.floor(Math.random() * colors.length)];
